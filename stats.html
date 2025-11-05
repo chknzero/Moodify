@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Statistics</title>
+    <style>
+        /* ========== GLOBAL STYLES ========== */
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            padding: 40px;
+            background-color: rgba(247, 249, 255, 0.65);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .navbar button {
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ffffff;
+            color: #0b0d14;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .navbar button:hover {
+            transform: translateY(-2px);
+            transition: transform 0.2s ease;
+        }
+
+        /* ========== FILTER AND TOGGLE BUTTONS ========== */
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .controls button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #7c4dff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .controls button:hover {
+            background-color: #5a2bff;
+            transform: translateY(-2px);
+        }
+
+        /* ========== CHART CONTAINER ========== */
+        #chartContainer {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <div class="navbar">
+        <button onclick="window.location.href='index.html'">Back to Home</button>
+    </div>
+
+    <h1>Mood Statistics</h1>
+
+    <!-- Filter and toggle buttons -->
+    <div class="controls">
+        <button id="weeklyBtn">Weekly</button>
+        <button id="monthlyBtn">Monthly</button>
+        <button id="toggleChartBtn">Toggle Bar/Pie</button>
+    </div>
+
+    <!-- Chart Canvas -->
+    <div id="chartContainer">
+        <canvas id="moodChart"></canvas>
+    </div>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        /* ========== FETCH DATA FROM LOCALSTORAGE ========== */
+        let moodRecords = JSON.parse(localStorage.getItem('moodRecords')) || [];
+
+        /* ========== INITIAL SETTINGS ========== */
+        let filter = 'weekly'; // default filter
+        let chartType = 'bar'; // default chart type
+
+        const ctx = document.getElementById('moodChart').getContext('2d');
+        let moodChart; // chart instance
+
+        /* ========== HELPER FUNCTION TO GET LAST 7 OR 30 DAYS ========== */
+        function filterRecords() {
+            const today = new Date();
+            const filtered = moodRecords.filter(entry => {
+                const entryDate = new Date(entry.date);
+                if (filter === 'weekly') {
+                    const diff = (today - entryDate) / (1000*60*60*24); // difference in days
+                    return diff <= 7;
+                } else { // monthly
+                    const diff = (today - entryDate) / (1000*60*60*24);
+                    return diff <= 30;
+                }
+            });
+            return filtered;
+        }
+
+        /* ========== HELPER FUNCTION TO COUNT MOOD OCCURRENCES ========== */
+        function countMoods(records) {
+            const moods = { Great:0, Good:0, Meh:0, Bad:0, Awful:0 };
+            records.forEach(r => {
+                if (moods[r.mood] !== undefined) moods[r.mood]++;
+            });
+            return moods;
+        }
+
+        /* ========== RENDER CHART ========== */
+        function renderChart() {
+            const records = filterRecords(); // filter by weekly/monthly
+            const moodCounts = countMoods(records); // count occurrences
+
+            const data = {
+                labels: Object.keys(moodCounts),
+                datasets: [{
+                    label: 'Mood Counts',
+                    data: Object.values(moodCounts),
+                    backgroundColor: ['#00ffbb','#00ff08','#3da4ff','#ffa500','red'],
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }]
+            };
+
+            const config = {
+                type: chartType, // bar or pie
+                data: data,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    scales: chartType==='bar' ? { 
+                        y: { beginAtZero: true } 
+                    } : {}
+                }
+            };
+
+            if (moodChart) moodChart.destroy(); // destroy previous chart
+            moodChart = new Chart(ctx, config); // render new chart
+        }
+
+        /* ========== BUTTON EVENTS ========== */
+        document.getElementById('weeklyBtn').addEventListener('click', () => { filter='weekly'; renderChart(); });
+        document.getElementById('monthlyBtn').addEventListener('click', () => { filter='monthly'; renderChart(); });
+        document.getElementById('toggleChartBtn').addEventListener('click', () => {
+            chartType = chartType==='bar' ? 'pie' : 'bar';
+            renderChart();
+        });
+
+        /* ========== INITIAL RENDER ========== */
+        renderChart();
+    </script>
+</body>
+</html>

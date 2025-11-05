@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Entries</title>
+    <style>
+        /* ========== GLOBAL STYLES ========== */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background-color: rgba(247, 249, 255, 0.65);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* ========== NAVIGATION BUTTON ========== */
+        .navbar button {
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ffffff;
+            color: #0b0d14;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .navbar button:hover {
+            transform: translateY(-2px);
+            transition: transform 0.2s ease;
+        }
+
+        /* ========== MOOD RECORD CARDS ========== */
+        .record {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .record h2 {
+            margin: 0;
+            color: #6c8ef5;
+        }
+
+        .record p {
+            margin: 5px 0 0;
+            cursor: text; /* indicates editable text */
+        }
+
+        /* Highlight editable area on focus */
+        .record p:focus {
+            outline: 2px solid #7c4dff;
+            border-radius: 5px;
+            padding: 2px 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div class="navbar">
+        <button onclick="window.location.href='index.html'">Back to Home</button>
+    </div>
+
+    <h1>Your Mood History</h1>
+    <div id="recordsContainer"></div> <!-- container for all mood entries -->
+
+    <script>
+        /* ========== SELECT CONTAINER ========== */
+        const container = document.getElementById('recordsContainer');
+
+        /* ========== GET MOOD RECORDS FROM LOCALSTORAGE ========== */
+        let moodRecords = JSON.parse(localStorage.getItem('moodRecords')) || [];
+
+        /* ========== FUNCTION TO RENDER RECORDS ========== */
+        function renderRecords() {
+            container.innerHTML = ''; // clear container
+            if (moodRecords.length === 0) {
+                container.innerHTML = "<p style='text-align:center;'>No mood entries yet. Go record one!</p>";
+                return;
+            }
+
+            moodRecords.forEach((entry, index) => {
+                // create record div
+                const div = document.createElement('div');
+                div.classList.add('record');
+
+                // create date + mood header
+                const header = document.createElement('h2');
+                header.textContent = `${entry.date} — ${entry.mood}`;
+                div.appendChild(header);
+
+                // create notes paragraph
+                const notes = document.createElement('p');
+                notes.textContent = entry.notes;
+                notes.setAttribute('contenteditable', 'true'); // make editable inline
+                notes.addEventListener('blur', () => {
+                    // save updated note when user clicks away
+                    moodRecords[index].notes = notes.textContent.trim();
+                    localStorage.setItem('moodRecords', JSON.stringify(moodRecords));
+                });
+
+                div.appendChild(notes);
+                container.appendChild(div);
+            });
+        }
+
+        /* ========== INITIAL RENDER ========== */
+        renderRecords();
+    </script>
+</body>
+</html>

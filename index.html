@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Reversed</title>
+    <style>
+        /* ========== GLOBAL STYLES ========== */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif; /* Global font */
+        }
+
+        /* ========== MAIN BACKGROUND ========== */
+        main {
+            background: url('resources/wave_2.gif') center/cover; /* GIF background */
+            min-height: 100vh;
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            isolation: isolate; /* separate blending context */
+            mix-blend-mode: screen;
+        }
+
+        /* ========== NAVIGATION BAR ========== */
+        .navigation {
+            background-color: rgba(58, 56, 56, 0.6); /* semi-transparent nav */
+            height: 100px;
+            width: 100%;
+            color: #fff;
+            font-weight: bold;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            padding: 0 60px;
+            box-sizing: border-box;
+            box-shadow: 1px 1px 1px rgba(211,211,211,0.308),
+                        10px 11px 12px rgba(211,211,211,0.308);
+            z-index: 1000; /* above everything */
+        }
+
+        .navigation a {
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+            margin: 0 10px;
+            padding: 8px 12px;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        /* ========== EMOJI BUTTON CONTAINER ========== */
+        #BtnContainer {
+            background-color: rgba(59,59,59,0.6);
+            border: 4px solid rgba(0,229,255,0.9);
+            color: white;
+            padding: 40px 50px;
+            margin: 100px auto 20px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 40px;
+            height: 150px;
+            width: 50%;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+            backdrop-filter: blur(4px);
+        }
+
+        /* ========== EMOJI BUTTONS ========== */
+        .emoji-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 60px;
+            margin: 30px;
+            transition: transform 0.3s ease;
+            will-change: transform; /* optimize hover scaling */
+        }
+
+        /* Hover effect per mood */
+        .great:hover { transform: scale(1.3); color: #00ffbb; text-shadow:0 0 15px #00ffbb; filter: drop-shadow(0 0 10px #00ffbb);}
+        .good:hover  { transform: scale(1.3); color: #00ff08; text-shadow:0 0 15px #1bff06; filter: drop-shadow(0 0 10px #1bff06);}
+        .meh:hover   { transform: scale(1.3); color: #3da4ff; text-shadow:0 0 8px rgba(61,164,255,0.6); filter: drop-shadow(0 0 15px #3da4ff);}
+        .bad:hover   { transform: scale(1.3); color: #ffa500; text-shadow:0 0 8px rgba(255,165,0,0.6); filter: drop-shadow(0 0 15px #ffa500);}
+        .awful:hover { transform: scale(1.3); color: red; text-shadow:0 0 8px rgba(255,0,0,0.6); filter: drop-shadow(0 0 15px #ff0000);}
+
+        /* ========== HEADER TEXT ========== */
+        h1 {
+            text-align: center;
+            margin-top: 200px;
+            font-size: 50px;
+            color: white;
+        }
+
+        /* ========== POPUP STYLES ========== */
+        .popup {
+            display: none; /* hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4); /* dark overlay */
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .popup.show {
+            display: flex; /* visible when "show" class added */
+        }
+
+        .popup-content {
+            background: rgba(255,255,255,0.65);
+            padding: 30px;
+            border-radius: 15px;
+            width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            backdrop-filter: blur(6px);
+        }
+
+        .popup textarea {
+            display: block;
+            background: rgba(255,255,255,0.8);
+            width: 90%;
+            height: 100px;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            resize: none;
+            text-align: center;
+        }
+
+        .popup-buttons {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .popup-buttons button {
+            background-color: #7c4dff;
+            color: white;
+            border: none;
+            margin: 10px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.18s ease, transform 0.12s ease;
+        }
+
+        .popup-buttons button:hover {
+            background-color: #5a2bff;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            #BtnContainer { width: 90%; padding: 20px; height: auto; }
+            .emoji-btn { font-size: 40px; margin: 20px; }
+            h1 { font-size: 36px; margin-top: 150px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navigation">
+        <a href="index.html">Home</a>
+        <a href="list.html">See your entries</a>
+        <a href="stats.html">View Stats</a> <!-- link to graph page -->
+    </nav>
+
+    <!-- Main Mood Input Section -->
+    <main>
+        <h1>How are you feeling today?</h1>
+        <div id="BtnContainer">
+            <button class="emoji-btn great" data-feeling="Great" aria-label="Great mood">😃</button>
+            <button class="emoji-btn good" data-feeling="Good" aria-label="Good mood">🙂</button>
+            <button class="emoji-btn meh" data-feeling="Meh" aria-label="Meh mood">😐</button>
+            <button class="emoji-btn bad" data-feeling="Bad" aria-label="Bad mood">😣</button>
+            <button class="emoji-btn awful" data-feeling="Awful" aria-label="Awful mood">😩</button>
+        </div>
+    </main>
+
+    <!-- Popup Notes Section -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <h3 id="popup-title"></h3>
+            <textarea id="notes" placeholder="Tell me about your day..."></textarea>
+            <div class="popup-buttons">
+                <button id="saveBtn">Save</button>
+                <button id="closeBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ========== SELECT ELEMENTS ========== */
+        const emojiBtns = document.querySelectorAll('.emoji-btn'); // all emoji buttons
+        const popup = document.getElementById('popup'); // popup overlay
+        const closeBtn = document.getElementById('closeBtn'); // close button
+        const saveBtn = document.getElementById('saveBtn'); // save button
+        const noteInput = document.getElementById('notes'); // textarea input
+        const popupTitle = document.getElementById('popup-title'); // popup title
+
+        /* ========== SHOW POPUP WHEN EMOJI CLICKED ========== */
+        emojiBtns.forEach(button => {
+            button.addEventListener('click', () => {
+                const feeling = button.dataset.feeling || "Unknown Mood"; // get mood
+                const f = feeling.toLowerCase();
+
+                popup.classList.add('show'); // display popup
+                noteInput.focus(); // auto-focus textarea
+                popup.setAttribute('mood-selected', feeling); // store selected mood
+
+                // Set popup title with friendly message
+                const extraMessage = { great: 'Nice!', good: 'Nice!', bad: 'Sorry to hear that.', awful: 'Sorry to hear that.' }[f] || '';
+                popupTitle.textContent = `You are feeling ${feeling}${extraMessage ? ', ' + extraMessage : ''}`;
+            });
+        });
+
+        /* ========== CLOSE POPUP ========== */
+        closeBtn.addEventListener('click', () => {
+            popup.classList.remove('show'); // hide popup
+            noteInput.value = ''; // clear textarea
+        });
+
+        /* ========== SAVE MOOD AND NOTES ========== */
+        saveBtn.addEventListener('click', () => {
+            const mood = popup.getAttribute('mood-selected'); // get selected mood
+            const notes = noteInput.value.trim(); // get notes
+
+            if (!notes) { // prevent empty note
+                alert('Write something first, ya goofball!');
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0]; // standard date format YYYY-MM-DD
+            let moodRecords = JSON.parse(localStorage.getItem('moodRecords')) || []; // get existing records
+
+            // check if entry exists today
+            if (moodRecords.some(entry => entry.date === today)) {
+                alert('You only get one entry per day.');
+                popup.classList.remove('show');
+                noteInput.value = '';
+                return;
+            }
+
+            // add new record
+            moodRecords.push({ date: today, mood, notes });
+
+            localStorage.setItem('moodRecords', JSON.stringify(moodRecords)); // save to localStorage
+            alert(`Nice! You are feeling ${mood}`);
+
+            popup.classList.remove('show'); // hide popup
+            noteInput.value = ''; // clear textarea
+        });
+    </script>
+</body>
+</html>
