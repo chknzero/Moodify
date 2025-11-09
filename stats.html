@@ -4,75 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mood Statistics</title>
-    <link rel="icon" type="image/png" href="emoticon.png">
-    <style>
-        /* ========== GLOBAL STYLES ========== */
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            padding: 40px;
-            background-color: rgba(247, 249, 255, 0.65);
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .navbar button {
-            font-size: 16px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #ffffff;
-            color: #0b0d14;
-            cursor: pointer;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .navbar button:hover {
-            transform: translateY(-2px);
-            transition: transform 0.2s ease;
-        }
-
-        /* ========== FILTER AND TOGGLE BUTTONS ========== */
-        .controls {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .controls button {
-            margin: 5px;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
-            background-color: #7c4dff;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.1s ease;
-        }
-
-        .controls button:hover {
-            background-color: #5a2bff;
-            transform: translateY(-2px);
-        }
-
-        /* ========== CHART CONTAINER ========== */
-        #chartContainer {
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-    </style>
+    <link rel="icon" type="image/png" href="resources/emoticon.png">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-
+<body style="padding: 40px;">
+    <div class="backdrop"></div>
     <!-- Navigation -->
     <div class="navbar">
         <button onclick="window.location.href='index.html'">Back to Home</button>
     </div>
 
-    <h1>Mood Statistics</h1>
+    <h1 id="h-stats">Mood Statistics</h1>
 
     <!-- Filter and toggle buttons -->
     <div class="controls">
@@ -172,4 +114,3 @@
     </script>
 </body>
 </html>
-

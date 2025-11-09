@@ -3,73 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Mood Entries</title>
-    <link rel="icon" type="image/png" href="emoticon.png">
-    <style>
-        /* ========== GLOBAL STYLES ========== */
-        body {
-            font-family: Arial, sans-serif;
-            padding: 40px;
-            background-color: rgba(247, 249, 255, 0.65);
-        }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        /* ========== NAVIGATION BUTTON ========== */
-        .navbar button {
-            font-size: 16px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #ffffff;
-            color: #0b0d14;
-            cursor: pointer;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .navbar button:hover {
-            transform: translateY(-2px);
-            transition: transform 0.2s ease;
-        }
-
-        /* ========== MOOD RECORD CARDS ========== */
-        .record {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .record h2 {
-            margin: 0;
-            color: #6c8ef5;
-        }
-
-        .record p {
-            margin: 5px 0 0;
-            cursor: text; /* indicates editable text */
-        }
-
-        /* Highlight editable area on focus */
-        .record p:focus {
-            outline: 2px solid #7c4dff;
-            border-radius: 5px;
-            padding: 2px 4px;
-        }
-    </style>
+    <link rel="icon" type="image/png" href="resources/emoticon.png">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+
+<body style="padding: 40px;">
+    <div class="backdrop"></div>
     <!-- Navigation -->
     <div class="navbar">
         <button onclick="window.location.href='index.html'">Back to Home</button>
     </div>
 
-    <h1>Your Mood History</h1>
+    <h1 id="h-list">Here lies, the emotions untold</h1>
     <div id="recordsContainer"></div> <!-- container for all mood entries -->
 
     <script>
@@ -117,4 +65,3 @@
     </script>
 </body>
 </html>
-
