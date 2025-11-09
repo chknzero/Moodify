@@ -84,12 +84,11 @@ main {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 60px;
-    margin: 0 15px;
+    margin: 0 25px;
     transition: transform 0.3s ease;
     will-change: transform;
-    width: 60px;
-    height: 60px;
+    width: 100px;
+    height: 100px;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -298,4 +297,5 @@ main {
     border-radius: 50px;
     max-width: 700px;
     margin: 100px auto 20px;
+
 }
